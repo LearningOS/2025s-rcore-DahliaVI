@@ -23,12 +23,21 @@ const SYSCALL_TRACE: usize = 410;
 
 mod fs;
 mod process;
+// mod task;
+// use crate::task::TaskControlBlock;
 
 use fs::*;
 use process::*;
 
+use crate::task::add_syscall_count;
+
 /// handle syscall exception with `syscall_id` and other arguments
 pub fn syscall(syscall_id: usize, args: [usize; 3]) -> isize {
+    // let current_task = current_task();
+    // let mut task_inner = current_task.inner_exclusive_access();
+    // let count = task_inner.syscall_counts.entry(syscall_id).or_insert(0);
+    // *count += 1;
+    add_syscall_count(syscall_id);
     match syscall_id {
         SYSCALL_WRITE => sys_write(args[0], args[1] as *const u8, args[2]),
         SYSCALL_EXIT => sys_exit(args[0] as i32),
